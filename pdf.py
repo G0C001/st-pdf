@@ -1,43 +1,51 @@
 import streamlit as st
-from weasyprint import HTML
+import ctypes, json, io, os
+from body import styleresume, personal, summary, education, experience_certfy, skills, project_lang
 
-# Set the title of the app
-st.title("HTML to PDF Converter")
+# gtk3_path = "GTK3/"
+# for file_name in os.listdir(gtk3_path):
+#     if file_name.endswith(".dll"):
+#         dll_path = os.path.join(gtk3_path, file_name)
+#         try:
+#             my_dll = ctypes.CDLL(dll_path)
+#             print(f"Successfully loaded {dll_path}")
+#         except Exception as e:
+#             print(f"Failed to load {dll_path}: {e}")
 
-# Create a text input for the user's name
-name = st.text_input("Enter your name:")
-message = st.text_area("Enter a message:")
+# from weasyprint import HTML
 
-# Create a button to generate PDF
-if st.button("Generate PDF"):
-    if name and message:
-        # Create simple HTML content
+
+st.title('Role and JSON Input App')
+role = st.text_input('Enter your role:')
+json_input = st.text_area('Enter your JSON:', height=200)
+
+if st.button('Submit'):
+    try:
+        skills_dict = json.loads(json_input)
         html_content = f"""
-        <html>
-            <head>
-                <title>PDF Document</title>
-                <style>
-                    body {{ font-family: Arial, sans-serif; }}
-                    h1 {{ color: #333; }}
-                    p {{ font-size: 14px; }}
-                </style>
-            </head>
-            <body>
-                <h1>Hello, {name}!</h1>
-                <p>{message}</p>
-            </body>
+        {styleresume.style()}
+        <body>
+            <div class="container">
+                {personal.personal(role)}
+                {summary.summary(role)}
+                {education.education()}
+                {experience_certfy.experience_certfy()}
+                {skills.skill(skills_dict)}
+                {project_lang.project_lan()}
+            </div>
+        </body>
         </html>
         """
-
-        # Generate PDF from HTML
-        pdf_file = HTML(string=html_content).write_pdf()
-
-        # Download the PDF
+        pdf = HTML(string=html_content).write_pdf()
+        pdf_buffer = io.BytesIO(pdf)
         st.download_button(
-            label="Download PDF",
-            data=pdf_file,
-            file_name="output.pdf",
-            mime="application/pdf"
+            label=f'Download Resume for {role}',
+            data=pdf_buffer,
+            file_name=f'GokulVasanth_{role}_Resume.pdf',
+            mime='application/pdf'
         )
-    else:
-        st.warning("Please enter both your name and a message.")
+
+    except json.JSONDecodeError:
+        st.error('Invalid JSON format. Please check your input.')
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
