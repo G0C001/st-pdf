@@ -15,9 +15,9 @@ from body import styleresume, personal, summary, education, experience_certfy, s
 # from weasyprint import HTML
 
 
-st.title('Role and JSON Input App')
+st.title('ATS_RESUME')
 role = st.text_input('Enter your role:')
-json_input = st.text_area('Enter your JSON:', height=200)
+json_input = st.text_area('Enter your Skill-JSON:', height=200)
 
 if st.button('Submit'):
     try:
