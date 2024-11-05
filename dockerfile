@@ -1,22 +1,18 @@
 # Use an official Python runtime as a parent image
 FROM python:3.12-slim
 
-# Install the necessary system packages (including GTK libraries)
+# Install necessary system packages (including GTK libraries for WeasyPrint)
 RUN apt-get update && apt-get install -y \
-    libgobject-2.0-0 \
-    libpango-1.0-0 \
-    libfontconfig1 \
+    libgdk-pixbuf-2.0-0 \
+    libpangocairo-1.0-0 \
     libpangoft2-1.0-0 \
-    libgdk-pixbuf2.0-0 \
-    libcairo2 \
+    libfontconfig1 \
     libffi-dev \
-    libxml2-dev \
-    libjpeg62-turbo \
-    build-essential \
-    wget
+    libcairo2 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install WeasyPrint and other Python dependencies
-RUN pip install weasyprint streamlit
+RUN pip install --no-cache-dir weasyprint streamlit
 
 # Set the working directory in the container
 WORKDIR /app
@@ -24,8 +20,8 @@ WORKDIR /app
 # Copy the current directory contents into the container
 COPY . /app
 
-# Expose port 8501 to access the Streamlit app
+# Expose the port for Streamlit
 EXPOSE 8501
 
-# Run the Streamlit app
+# Command to run the Streamlit app
 CMD ["streamlit", "run", "pdf.py"]
