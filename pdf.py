@@ -12,7 +12,7 @@ from body import styleresume, personal, summary, education, experience_certfy, s
 #         except Exception as e:
 #             print(f"Failed to load {dll_path}: {e}")
 
-# from weasyprint import HTML
+from weasyprint import HTML
 
 
 st.title('ATS_RESUME')
